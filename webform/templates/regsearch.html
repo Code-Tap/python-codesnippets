@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+    <head>
+        <title>Manheim UK - Reg Search</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css.map') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css.map') }}">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+       <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+ <style>
+nav {
+    background-color: #004489;
+}
+.logo {
+    height: 100px;
+    object-fit : contain;
+}
+div#loading {
+    display: none;
+    position: center;
+    top: 0;
+    left: 0;
+    bottom: 100;
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+    background-image: url("");
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: wait;
+    }
+
+</style>
+    </head>
+    <body>
+            <script type="text/javascript">// <![CDATA[
+                function loading(){
+                    $("#loading").show();
+                    $("#page").hide();       
+                }
+            // ]]></script>
+            
+
+<div id="loading"><div class="container h-100 d-flex justify-content-center"><div class="jumbotron my-auto">
+        <div class="card" style="width:300px">
+            <img class="card-img-bottom rounded" src="{{ url_for('static', filename='images/car.gif') }}" alt="Wheeee!">
+            <div class="card-body">
+              <h4 class="card-title">Manheim Reg Checker</h4>
+              <p class="card-text">{% if quote_list %}{{ quote_list }}{% endif %}</p>
+            </div>
+          </div>
+      </div></div></div>
+<div id="page">
+<div class="container">
+ 
+    <nav class="navbar" >
+
+        <div class="container">
+            <div class="navbar-header">
+                <a href="/"><img id="logo" class=logo src="{{ url_for('static', filename='images/manheimlogo.png') }}" /></a>
+
+            </div>
+                  <div class="pull-right navbar-btn">
+        <button type="submit" class="btn btn-outline-danger align-middle">Quit</button>
+        </div>
+        </div>
+    </nav>
+
+    <h2>Home > Inspections > Unresourced Search</h2>
+  <form  action="" method="post" role="form">
+    {{ form.csrf }}
+    {% if sources %}
+    <div class="form-group">
+            <label for="dirselect">Select Year and Month</label>
+            <select class="form-control" id="dirselect" name="dirselect">
+            
+            {% for i in sources|reverse %}
+            <option>{{ i }}</option>
+            {% endfor %}
+            
+            </select>
+    </div>
+    {% endif %}
+
+    <div class="form-group">
+      <label for="reg">Vehicle Registration:</label>
+      <input type="text" class="form-control" id="reg" name="reg" placeholder="Enter Registration, Postcode or Phone Number here">
+      <button type="submit" class="btn btn-success" onclick="loading();">Submit</button>
+    </div>
+  </form>
+
+
+  <br>
+<div class="container alert alert-dismiss fade-in table-sm">
+<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+
+        {% for message in messages %}
+            {% if "Error" not in message[1]: %}
+                <div class="alert alert-info">
+                  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Success! </strong> {{ message[1]|safe }}
+                </div>
+            {% endif %}
+
+            {% if "Error" in message[1]: %}
+                <div class="alert alert-warning">
+                  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                  <strong>{{ message[1] }}</strong>
+                </div>
+            {% endif %}
+        {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+<br>
+{% if data %}
+<a href="mailto:{{data[0]}}?subject={{data[4]}} - Customer ETA Request&body={% for i in data %}{{ i }}%0D%0A{% endfor %}" class="btn btn-block btn-success" role="button">Send ETA Request to Inspector <i class="material-icons">mail_outline</i></a>
+<table class="table table-hover table-striped">
+    <thead style = "color:#31708f;background-color:#b9def0">
+
+        <tr>
+            <th>Inspector</th>
+            <th>Col.Address</th>
+            <th>Col.Post Code</th>
+            <th>Customer</th>
+            <th>Reg Num</th>
+            <th>Driver Notes</th>
+            <th>Contact</th>
+            <th>Telephone</th>
+        <tr>
+    </thead>
+    <tbody>
+      <tr>
+        {% for i in data %}
+
+            <td>{{ i }}</td>
+
+            {% endfor %}
+        </tr>
+
+    </tbody>
+</table>
+
+<div class="text-center">
+<img src="https://maps.googleapis.com/maps/api/staticmap?center={{data[2]}}&zoom=13&scale=1&size=800x300&maptype=roadmap&format=jpg&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:1%7C{{data[2]}}" class="rounded shadow-lg">
+</div>
+{% endif %}
+
+</div>
+</div>
+<br>
+</div>
+</div>
+</div>
+<script src="{{ url_for('static', filename='js/jquery-3.2.1.slim.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+</body>
+</html>
